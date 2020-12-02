@@ -19,7 +19,12 @@ TicTacToeBoard::TicTacToeBoard()
 **/
 Piece TicTacToeBoard::toggleTurn()
 {
-  return Invalid;
+  if(turn == X) {
+    turn = O;
+  }
+  else {
+    turn = X;
+  }
 }
 
 /**
@@ -33,6 +38,28 @@ Piece TicTacToeBoard::toggleTurn()
 **/ 
 Piece TicTacToeBoard::placePiece(int row, int column)
 {
+  /* check bounds */
+  if(row > 3 || column > 3) {
+    return Invalid;
+  }
+  /* check occupancy */
+  Piece thispiece = getPiece(row, column);
+  if(thispiece == X) {
+    return X;
+    toggleTurn();
+  }
+  else if(thispiece == O) {
+    return O;
+    toggleTurn();
+  }
+  else if(thispiece == Blank){
+    board[row][column] = turn;
+    toggleTurn();
+  }
+  else {
+    return Invalid;
+  }
+  /* something so unforeseen has happen */
   return Invalid;
 }
 
@@ -42,6 +69,18 @@ Piece TicTacToeBoard::placePiece(int row, int column)
 **/
 Piece TicTacToeBoard::getPiece(int row, int column)
 {
+  /* check bounds */
+  if(row > 3 || column > 3) {
+    return Invalid;
+  }
+  /* check occupancy */
+  if(board[row][column] != Blank) {
+      return board[row][column];
+  }
+  else {
+    return Blank;
+  }
+  /* something so unforeseen has happened */
   return Invalid;
 }
 
@@ -51,5 +90,26 @@ Piece TicTacToeBoard::getPiece(int row, int column)
 **/
 Piece TicTacToeBoard::getWinner()
 {
+  /* check horizontal wins */
+  for(int i = 0; i < 3; i++) {
+    if(board[i][0] == board[i][1] && board[i][0] == board[i][2]) {
+      return board[i][0];
+    }
+  }
+  /* check vertical wins */
+  for(int i = 0; i < 3; i++) {
+    if(board[0][i] == board[1][i] && board[0][i] == board[2][i]) {
+      return board[0][i];
+    }
+  }
+  /* check for diagnoal left to right */
+  if(board[0][0] == board[1][1] && board[0][0] == board[2][2] || board[0][2] == board[1]][1] && board[0][2] == board[2][0]) {
+    return board[0][0];
+  }
+  /* check for diagnoal right to left */
+  if(board[0][2] == board[1]][1] && board[0][2] == board[2][0]) {
+    return board[0][2];
+  }
+  /* game is still in play */
   return Invalid;
 }
