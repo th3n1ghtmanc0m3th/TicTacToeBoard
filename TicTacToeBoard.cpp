@@ -25,6 +25,7 @@ Piece TicTacToeBoard::toggleTurn()
   else {
     turn = X;
   }
+  return turn;
 }
 
 /**
@@ -38,10 +39,6 @@ Piece TicTacToeBoard::toggleTurn()
 **/ 
 Piece TicTacToeBoard::placePiece(int row, int column)
 {
-  /* check bounds */
-  if(row > 3 || column > 3) {
-    return Invalid;
-  }
   /* check occupancy */
   Piece thispiece = getPiece(row, column);
   if(thispiece == X) {
@@ -69,6 +66,10 @@ Piece TicTacToeBoard::placePiece(int row, int column)
 **/
 Piece TicTacToeBoard::getPiece(int row, int column)
 {
+  /* Checking for negative numbers */
+  if(row < 0 || column < 0) {
+    return Invalid;
+  }
   /* check bounds */
   if(row > 3 || column > 3) {
     return Invalid;
@@ -90,26 +91,115 @@ Piece TicTacToeBoard::getPiece(int row, int column)
 **/
 Piece TicTacToeBoard::getWinner()
 {
-  /* check horizontal wins */
+  bool blankFlag = false;
+  /* check for horizontal wins */
   for(int i = 0; i < 3; i++) {
-    if(board[i][0] == board[i][1] && board[i][0] == board[i][2]) {
-      return board[i][0];
+    Piece left = getPiece(i, 0);
+    Piece middle = getPiece(i, 1);
+    Piece right = getPiece(i, 2);
+
+    /* check for actual piece */
+    bool leftIsPiece = (left == X || left == 0);
+    bool rightIsPiece = (right == X || right == 0);
+    bool middleIsPiece = (middle == X || middle == 0);
+
+    /* check for blank spaces */
+    if(left == Blank || middle == Blank || right == Blank) {
+      blankFlag = true;
+    }
+
+    /* if and blank continue */
+    if(!leftIsPiece || !middleIsPiece || !rightIsPiece) {
+      continue;
+    }
+
+    /* all pieces equal, declare winner */
+    if(left == middle && middle == right) {
+      return left;
     }
   }
-  /* check vertical wins */
+	
+  /* check for vertical wins */
   for(int i = 0; i < 3; i++) {
-    if(board[0][i] == board[1][i] && board[0][i] == board[2][i]) {
-      return board[0][i];
+    Piece top = getPiece(i, 0);
+    Piece middle = getPiece(i, 1);
+    Piece bottom = getPiece(i, 2);
+
+    /* check for actual piece */
+    bool topIsPiece = (top == X || top == 0);
+    bool bottomIsPiece = (bottom == X || bottom == 0);
+    bool middleIsPiece = (middle == X || middle == 0);
+
+    /* check for blank spaces */
+    if(top == Blank || middle == Blank || bottom == Blank) {
+      blankFlag = true;
+    }
+
+    /* if and blank continue */
+    if(!topIsPiece || !middleIsPiece || !bottomIsPiece) {
+      continue;
+    }
+
+    /* all pieces equal, declare winner */
+    if(top == middle && middle == bottom) {
+      return top;
+    }
+  }	
+
+  /* check for diagonal winners left */
+  {
+    Piece top = getPiece(0, 0);
+    Piece middle = getPiece(1, 1);
+    Piece bottom = getPiece(2, 2);
+
+    /* check if its valid piece */
+    bool topIsPiece = (top == X || top == 0);
+    bool bottomIsPiece = (bottom == X || bottom == 0);
+    bool middleIsPiece = (middle == X || middle == 0);
+
+    /* if and blank continue */
+    if(!topIsPiece || !middleIsPiece || !bottomIsPiece) {
+      continue;
+    }
+
+    /* all pieces equal, declare winner */
+    if(topIsPiece && middleIsPiece && bottomIsPiece) {
+      if(top == middle && middle == bottom) {
+        return top;
+      }
     }
   }
-  /* check for diagnoal left to right */
-  if(board[0][0] == board[1][1] && board[0][0] == board[2][2] || board[0][2] == board[1]][1] && board[0][2] == board[2][0]) {
-    return board[0][0];
+ 
+  /* check for diagonal winners right */
+  {
+    Piece top = getPiece(0, 2);
+    Piece middle = getPiece(1, 1);
+    Piece bottom = getPiece(2, 0);
+
+    /* check if its valid piece */
+    bool topIsPiece = (top == X || top == 0);
+    bool bottomIsPiece = (bottom == X || bottom == 0);
+    bool middleIsPiece = (middle == X || middle == 0);
+
+    /* if and blank continue */
+    if(!topIsPiece || !middleIsPiece || !bottomIsPiece) {
+      continue;
+    }
+
+    /* all pieces equal, declare winner */
+    if(topIsPiece && middleIsPiece && bottomIsPiece) {
+      if(top == middle && middle == bottom) {
+        return top;
+      }
+    }
+  }  
+	
+  /* no winner, check blanks */
+  if(blankFlag) {
+    return Invalid;
   }
-  /* check for diagnoal right to left */
-  if(board[0][2] == board[1]][1] && board[0][2] == board[2][0]) {
-    return board[0][2];
+  else {
+    return Blank;
   }
-  /* game is still in play */
-  return Invalid;
+
 }
